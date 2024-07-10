@@ -115,6 +115,12 @@ func (t *Timer) tick() {
 	}
 }
 
+// 入参设置为 一个 seconds, 便于测试.
+// lua 脚本保证原子性.
+// 1. 将 到期的任务 转移到 ReadyQueue 中
+// 2. 将达到重试次数的 job 转移到 DeadLetter 中
+// 3. 将 超过 ttr的任务(jobPool 中过期了) 或者 过滤掉正常执行完成的 job
+// tries 的更新在 Queue.PollQueues()中
 func (t *Timer) pump(currentSecond int64) {
 	for {
 		val, err := t.redis.Conn.EvalSha(dummyCtx, t.pumpSHA, []string{t.Name(), QueuePrefix, PoolPrefix, DeadLetterPrefix}, currentSecond, BatchSize).Result()

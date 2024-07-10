@@ -32,6 +32,7 @@ func Publish(c *gin.Context) {
 	jobID := c.Param("job_id")
 
 	if jobID != "" {
+		// 重新发布时, 将 old job 删除.
 		// delete job whatever other publish parameters
 		if err := e.Delete(namespace, queue, jobID); err != nil {
 			logger.WithFields(logrus.Fields{

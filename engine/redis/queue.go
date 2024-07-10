@@ -213,6 +213,7 @@ func PollQueues(redis *RedisInstance, timer *Timer, queueNames []QueueName, time
 		return nil, "", 0, err
 	}
 
+	// 正常情况下不会发生. tries = 0 的任务会被转移到 DeadLetter
 	if tries == 0 {
 		logger.WithFields(logrus.Fields{
 			"jobID": jobID,
